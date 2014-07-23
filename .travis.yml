@@ -1,0 +1,16 @@
+language: python
+
+python:
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
+
+before_install:
+  - echo -e "Host heroku.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - echo -e "Host bitbucket.org\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+install: pip install -r requirements.txt
+
+script: tox

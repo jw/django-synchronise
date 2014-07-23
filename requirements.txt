@@ -1,0 +1,4 @@
+Django==1.6.5
+#hgapi==1.7.2a1 (1.8.0)
+hg+ssh://hg@bitbucket.org/elevenbits/hgapi
+hg-git==0.6.0
