@@ -1,8 +1,50 @@
+from django.http import HttpResponse
+from django.conf import settings
+
 import configparser
 from os.path import join
 from tempfile import TemporaryDirectory
 
 import hgapi
+
+import logging
+logger = logging.getLogger(__name__)
+
+
+GIT_OWNER = 'jw'
+
+
+def is_bitbucket_hg_post(post):
+    logger.debug('Checking post for Bitbucket...')
+    result = False
+    print(post['canon_url'])
+    if 'bitbucket' in post['canon_url']:
+        repo = post['repository']
+        if repo['scm'] == 'hg':
+            print('Is a Bitbucket Mercurial repository.')
+            result = True
+    return result
+
+
+def handle_post(post):
+    logger.info('Handling {}...'.format(post))
+    if is_bitbucket_hg_post(post):
+        repo = post['repository']
+        # hg_path should be ssh://hg@bitbucket.org/<name>/<project>,
+        hg_path = 'ssh://hg@bitbucket.org/{}/{}'.format(repo['owner'],
+                                                        repo['name'])
+        # git_path should be git+ssh://git@github.com/<user>/<project>.git
+        git_path = 'git+ssh://git@github.com/{}/{}.git'.format(
+            GIT_OWNER, repo['name']
+        )
+        try:
+            hg_to_git(hg_path, git_path)
+        except hgapi.HgException as he:
+            HttpResponse("Could not convert: {}.".format(he),
+                         status=409)
+    else:
+        HttpResponse('Not a valid post. Discarding it.', status=409)
+    return HttpResponse('POST: {}\n'.format(post), status=200)
 
 
 def add_hggit_extension_and_git_path(hg_repo_path, git_path):
