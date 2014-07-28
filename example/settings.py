@@ -39,7 +39,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'example.urls'
 
-WSGI_APPLICATION = 'synchronise.wsgi.application'
+WSGI_APPLICATION = 'example.wsgi.application'
 
 
 # Database
