@@ -1,0 +1,4 @@
+syntax: glob
+.tox
+.idea
+__pycache__
