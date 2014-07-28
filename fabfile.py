@@ -69,7 +69,6 @@ def _add_environment_properties(config, section):
         )
 
 
-
 @task
 def production():
     """
