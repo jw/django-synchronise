@@ -53,9 +53,6 @@ def _add_environment_properties(config, section):
     try:
         env.user = config.get(section, "user.username")
         env.password = config.get(section, "user.password")
-        env.dbuser = config.get(section, "db.username")
-        env.dbpassword = config.get(section, "db.password")
-        env.dbname = config.get(section, "db.name")
         env.hosts = [config.get(section, "host")]
         return True
     except NoOptionError as noe:
