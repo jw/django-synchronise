@@ -9,8 +9,9 @@ projects.
 
 ### How do you make the synchonisation work? ###
 
-There is an example directory.  Install it follow these rules to synchronise
-your project called <project> on Bitbucket with user called <user> to Github:
+There is an example directory.  Install it and follow these rules to 
+synchronise your project called <project> on Bitbucket with user called 
+<user> to Github:
 
 1. Make sure your Bitbucket repository is Mercurial based. Your project 
    can be private or public.
