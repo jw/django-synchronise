@@ -1,5 +1,13 @@
 
+django-synchroniser 0.3.0 (released in three months)
+
+    * Please add?
+
+django-synchroniser 0.2.0 (released soon)
+
+    * Should have git owner and git project vars in hook
+    * Log properly
+
 django-synchroniser 0.1.1 (released 21.07.2014)
 
     * Initial release
-
