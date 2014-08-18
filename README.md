@@ -71,6 +71,42 @@ Here is a first draft of the installation process using `nginx` and `uwsgi`:
 * This is a Django project, and uses only Python based dependencies: hgapi
   and hggit.
 * The database is not really needed.  The default sqlite3 will do for now.
+* To install UWSGI:
+  - Do not install using your distribution methods. So, do not use `apt-get`,
+    `yum` or `pakman`.
+  - Please download the latest uwsgi: http://projects.unbit.it/downloads/uwsgi-2.0.6.tar.gz
+  - Build plugins for it:
+    `python2.7 uwsgiconfig.py --plugin plugins/python core python27`
+    `python3.4 uwsgiconfig.py --plugin plugins/python core python34`
+* Create two ini files, one for Python 2.7 (two.ini), another one for Python
+  3 (three.ini):
+
+##### two.ini #####  
+
+[uwsgi]
+plugin-dir = /home/jw/plugins
+plugin = python27
+chdir = /home/jw/apps/two
+master = true
+threads = 2
+processes = 4
+http-socket = :9090
+wsgi-file = foobar.py
+
+##### three.ini #####
+
+[uwsgi]
+plugin-dir = /home/jw/plugins
+plugin = python34
+chdir = /home/jw/apps/three
+master = true
+threads = 2
+processes = 4
+http-socket = :8080
+wsgi-file = fizzbuzz.py
+
+Start the uwsgi emperor with `uwsgi --emperor <path where the ini files live>`
+and see the system handle to different python releases!
 
 ### Contribution guidelines ###
 
