@@ -4,3 +4,4 @@ syntax: glob
 __pycache__
 *.pyc
 django-synchroniser.properties
+db.sqlite3
