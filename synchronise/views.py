@@ -9,10 +9,19 @@ import json
 
 class SynchroniseView(View):
 
+
     @csrf_exempt
     def post(self, request, *args, **kwargs):
+        """
+        Handle the synchronise request.
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         try:
             payload = request.POST['payload']
+            print("POST: {}".format(request.POST))
             post = json.loads(payload)
             return synchronise.handle_post(post)
         except KeyError as ke:
