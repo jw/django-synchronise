@@ -22,7 +22,7 @@ def is_bitbucket_hg_post(post):
     return result
 
 
-def handle_post(post, user=None, project=None):
+def synchronise(post, user=None, project=None):
     logger.info('Handling {}...'.format(post))
     if is_bitbucket_hg_post(post):
         repo = post['repository']

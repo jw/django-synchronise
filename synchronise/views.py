@@ -13,18 +13,16 @@ class SynchroniseView(View):
 
     def post(self, request, *args, **kwargs):
         """
-        Handle the synchronise request.
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
+        Handle the synchronise request.  Gets the JSON payload and,
+        if available the user name and project name of the GitHub side.
+        Then is synchronisation is done.
         """
         try:
             payload_string = request.POST['payload']
             payload_json = json.loads(payload_string)
             user = request.GET.get('user')
             project = request.GET.get('project')
-            return synchronise.handle_post(payload_json, user, project)
+            return synchronise.synchronise(payload_json, user, project)
         except KeyError as ke:
             return HttpResponse("Post contains invalid JSON.\n",
                                 status=400)
