@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from django.conf import settings
 
 import configparser
 from os.path import join
