@@ -11,9 +11,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-GIT_OWNER = 'jw'
-
-
 def is_bitbucket_hg_post(post):
     logger.debug('Checking post for Bitbucket...')
     result = False
@@ -26,17 +23,20 @@ def is_bitbucket_hg_post(post):
     return result
 
 
-def handle_post(post):
+def handle_post(post, user=None, project=None):
     logger.info('Handling {}...'.format(post))
     if is_bitbucket_hg_post(post):
         repo = post['repository']
+        # use default user and project when not given
+        if user is None:
+            user = repo['owner']
+        if project is None:
+            project = repo['name']
         # hg_path should be ssh://hg@bitbucket.org/<name>/<project>,
         hg_path = 'ssh://hg@bitbucket.org/{}/{}'.format(repo['owner'],
                                                         repo['name'])
         # git_path should be git+ssh://git@github.com/<user>/<project>.git
-        git_path = 'git+ssh://git@github.com/{}/{}.git'.format(
-            GIT_OWNER, repo['name']
-        )
+        git_path = 'git+ssh://git@github.com/{}/{}.git'.format(user, project)
         try:
             hg_to_git(hg_path, git_path)
         except hgapi.HgException as he:
@@ -93,7 +93,7 @@ def hg_to_git(hg_path, git_path):
         add_hggit_extension_and_git_path(hg_repo_path, git_path)
         print('Bookmarking...')
         hg_repo.hg_bookmarks(action=hgapi.Repo.BOOKMARK_CREATE, name='master')
-        print('Pushing...')
+        print('Pushing to github...')
         hg_repo.hg_push('github')
 
 

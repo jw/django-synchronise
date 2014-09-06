@@ -9,8 +9,6 @@ import json
 
 class SynchroniseView(View):
 
-
-    @csrf_exempt
     def post(self, request, *args, **kwargs):
         """
         Handle the synchronise request.
@@ -20,10 +18,11 @@ class SynchroniseView(View):
         :return:
         """
         try:
-            payload = request.POST['payload']
-            print("POST: {}".format(request.POST))
-            post = json.loads(payload)
-            return synchronise.handle_post(post)
+            payload_string = request.POST['payload']
+            payload_json = json.loads(payload_string)
+            user = request.GET['user']
+            project = request.GET['project']
+            return synchronise.handle_post(payload_json, user, project)
         except KeyError as ke:
             return HttpResponse("Post contains invalid JSON.\n",
                                 status=400)

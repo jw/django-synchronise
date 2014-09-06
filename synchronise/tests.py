@@ -25,11 +25,11 @@ class BBToGHTest(unittest.TestCase):
     def test_invalid_json_posts(self):
         response = self.client.post('/synchronise/',
                                     '{ "invalid": "json" }',
-                                    content_type="text/plain")
+                                    content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response = self.client.post('/synchronise/',
                                     '{ "invalid": "json }',
-                                    content_type="text/plain")
+                                    content_type="application/json")
         self.assertEqual(response.status_code, 400)
 
     def test_valid_post1(self):
@@ -47,5 +47,6 @@ class BBToGHTest(unittest.TestCase):
                        '   "user": "elevenbits"                  '
                        '}                                        '
         }
-        response = self.client.post('/synchronise/', valid_post)
+        response = self.client.post('/synchronise/',
+                                    valid_post)
         self.assertEqual(response.status_code, 200)
