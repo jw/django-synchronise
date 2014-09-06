@@ -20,8 +20,14 @@ class SynchroniseView(View):
         try:
             payload_string = request.POST['payload']
             payload_json = json.loads(payload_string)
-            user = request.GET['user']
-            project = request.GET['project']
+            try:
+                user = request.GET['user']
+            except KeyError:
+                user = None
+            try:
+                project = request.GET['project']
+            except KeyError:
+                project = None
             return synchronise.handle_post(payload_json, user, project)
         except KeyError as ke:
             return HttpResponse("Post contains invalid JSON.\n",
