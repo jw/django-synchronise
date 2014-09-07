@@ -13,9 +13,8 @@ class SynchroniseView(View):
 
     def post(self, request, *args, **kwargs):
         """
-        Handle the synchronise request.  Gets the JSON payload and,
-        if available the user name and project name of the GitHub side.
-        Then is synchronisation is done.
+        Handle the synchronise request.  Gets the JSON payload and check
+        for the user name and project name.  Then the synchroniser is called.
         """
         try:
             payload_string = request.POST['payload']
