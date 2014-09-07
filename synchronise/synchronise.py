@@ -10,40 +10,45 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def is_bitbucket_hg_post(post):
-    logger.debug('Checking post for Bitbucket...')
+def is_bitbucket_hg_post(payload):
+    logger.debug('Searching payload for Bitbucket...')
     result = False
-    print(post['canon_url'])
-    if 'bitbucket' in post['canon_url']:
-        repo = post['repository']
-        if repo['scm'] == 'hg':
-            print('Is a Bitbucket Mercurial repository.')
-            result = True
+    try:
+        if 'bitbucket' in payload['canon_url']:
+            repo = payload['repository']
+            if repo['scm'] == 'hg':
+                logger.debug('This is a Bitbucket Mercurial repository.')
+                result = True
+    except KeyError:
+        pass  # no canon_url or scm in payload
     return result
 
 
-def synchronise(post, user=None, project=None):
-    logger.info('Handling {}...'.format(post))
-    if is_bitbucket_hg_post(post):
-        repo = post['repository']
-        # use default user and project when not given
-        if user is None:
-            user = repo['owner']
-        if project is None:
-            project = repo['name']
-        # hg_path should be ssh://hg@bitbucket.org/<name>/<project>,
-        hg_path = 'ssh://hg@bitbucket.org/{}/{}'.format(repo['owner'],
-                                                        repo['name'])
-        # git_path should be git+ssh://git@github.com/<user>/<project>.git
-        git_path = 'git+ssh://git@github.com/{}/{}.git'.format(user, project)
-        try:
-            hg_to_git(hg_path, git_path)
-        except hgapi.HgException as he:
-            HttpResponse("Could not convert: {}.".format(he),
-                         status=409)
-    else:
-        HttpResponse('Not a valid post. Discarding it.', status=409)
-    return HttpResponse('POST: {}\n'.format(post), status=200)
+def bitbucket_hg_post(payload, project, user):
+    repo = payload['repository']
+    # use default user and project when not given
+    if user is None:
+        user = repo['owner']
+    if project is None:
+        project = repo['name']
+    # hg_path should be ssh://hg@bitbucket.org/<name>/<project>,
+    hg_path = 'ssh://hg@bitbucket.org/{}/{}'.format(repo['owner'],
+                                                    repo['name'])
+    # git_path should be git+ssh://git@github.com/<user>/<project>.git
+    git_path = 'git+ssh://git@github.com/{}/{}.git'.format(user, project)
+    try:
+        hg_to_git(hg_path, git_path)
+    except hgapi.HgException as he:
+        HttpResponse("Could not convert: {}.".format(he),
+                     status=500, reason='HgApi problem: {}'.format(he))
+
+
+def synchronise(payload, user=None, project=None):
+    logger.debug('Handling {}...'.format(payload))
+    if is_bitbucket_hg_post(payload):
+        return bitbucket_hg_post(payload, project, user)
+    return HttpResponse('No proper JSON in payload. Discarding it.',
+                        status=400, reason='No proper JSON in payload.')
 
 
 def add_hggit_extension_and_git_path(hg_repo_path, git_path):
