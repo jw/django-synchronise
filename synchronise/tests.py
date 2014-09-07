@@ -13,13 +13,17 @@ class VersionTest(unittest.TestCase):
         self.assertTrue(synchronise.get_version(), '0.1.0')
 
 
-class BBToGHTest(unittest.TestCase):
+class BitBucketToGitHubTest(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
 
     def test_empty_post(self):
         response = self.client.post('/synchronise/', {})
+        self.assertEqual(response.status_code, 400)
+
+    def test_empty_post_with_user(self):
+        response = self.client.post('/synchronise/?user=jw', {})
         self.assertEqual(response.status_code, 400)
 
     def test_invalid_json_posts(self):
