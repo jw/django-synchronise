@@ -54,6 +54,22 @@ as master (via `hg bookmark master`), it will push the repo to GitHub (via
 
 See the code for more information.
 
+### Error codes ###
+
+Successful synchonisation request will return 200 with an informational
+message.  The synchroniser will return 400 when a request was unsuccessfully
+handled.
+
+Some examples when a 400 would be returned:
+- When invalid request arrives (e.g. no JSON payload)
+- The github project specified in the request does not exist
+- The user specified in the request the user does not exist
+- No Synchroniser collaborator is specified in the GitHub project
+
+A 500 will be returned when something bad happened at the server side, and
+is not caused by an invalid request.  For example the hggit plugin is not
+available or hgapi misbehaved.
+
 ### Can I create my own Synchroniser? ###
 
 Yes you can! All the code is available here. When you have a server 
@@ -73,14 +89,14 @@ Here is a first draft of the installation process using `nginx` and `uwsgi`:
   and hggit.
 * The database is not really needed.  The default sqlite3 will do for now.
 * To install UWSGI:
-  - Do not install using your distribution methods. So, do not use `apt-get`,
-    `yum` or `pakman`.
-  - Please download the latest uwsgi: http://projects.unbit.it/downloads/uwsgi-2.0.6.tar.gz
-  - Build plugins for it:
-    `python2.7 uwsgiconfig.py --plugin plugins/python core python27`
-    `python3.4 uwsgiconfig.py --plugin plugins/python core python34`
-* Create two ini files, one for Python 2.7 (two.ini), another one for Python
-  3 (three.ini):
+   - Do not install using your distribution methods. So, do not use `apt-get`,
+     `yum` or `pakman`.
+   - Please download the latest uwsgi: http://projects.unbit.it/downloads/uwsgi-2.0.6.tar.gz
+   - Build plugins for it:
+     `python2.7 uwsgiconfig.py --plugin plugins/python core python27`
+     `python3.4 uwsgiconfig.py --plugin plugins/python core python34`
+   - Create two ini files, one for Python 2.7 (two.ini), another one for Python
+     3 (three.ini):
 
 ##### two.ini #####  
 

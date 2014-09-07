@@ -23,9 +23,10 @@ class BBToGHTest(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_invalid_json_posts(self):
+        type = "application/x-www-form-urlencoded"
         response = self.client.post('/synchronise/',
                                     '{ "invalid": "json" }',
-                                    content_type="application/json")
+                                    content_type=type)
         self.assertEqual(response.status_code, 400)
         response = self.client.post('/synchronise/',
                                     '{ "invalid": "json }',
@@ -48,5 +49,25 @@ class BBToGHTest(unittest.TestCase):
                        '}                                        '
         }
         response = self.client.post('/synchronise/',
+                                    valid_post)
+        self.assertEqual(response.status_code, 200)
+
+    def test_valid_post2(self):
+        """
+        Test the push of this repository to the same repository on GitHub.
+        """
+        valid_post = {
+            'payload': '{                                        '
+                       '   "canon_url": "https://bitbucket.org", '
+                       '   "repository": {                       '
+                       '       "scm": "hg",                      '
+                       '       "owner": "elevenbits",            '
+                       '       "name": "django-synchroniser"     '
+                       '   },                                    '
+                       '   "user": "elevenbits"                  '
+                       '}                                        '
+        }
+        user_project = 'user=jw&project=django-synchronise'
+        response = self.client.post('/synchronise/?' + user_project,
                                     valid_post)
         self.assertEqual(response.status_code, 200)
