@@ -23,6 +23,9 @@ class SynchroniseView(View):
             user = request.GET.get('user')
             project = request.GET.get('project')
             return synchronise.synchronise(payload_json, user, project)
-        except KeyError as ke:
-            return HttpResponse("Post contains invalid JSON.\n",
+        except ValueError:
+            return HttpResponse("Post contains an invalid JSON payload.\n",
+                                status=400)
+        except KeyError:
+            return HttpResponse("A JSON payload needs to be provided.\n",
                                 status=400)
