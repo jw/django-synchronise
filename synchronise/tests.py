@@ -1,4 +1,5 @@
 from django.test import Client
+from urllib.parse import quote
 
 import unittest
 import synchronise
@@ -27,14 +28,22 @@ class BitBucketToGitHubTest(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_invalid_json_posts(self):
-        type = "application/x-www-form-urlencoded"
-        response = self.client.post('/synchronise/',
-                                    '{ "invalid": "json" }',
-                                    content_type=type)
+        content_type = "application/x-www-form-urlencoded"
+        # prepare the first request
+        invalid_json = '{ "Hello": "There" }'
+        invalid_json_url = quote(invalid_json)
+        payload = b'payload=' + bytes(invalid_json_url, 'utf-8')
+        # send it off
+        response = self.client.post('/synchronise/?user=jw',
+                                    payload, content_type=content_type)
         self.assertEqual(response.status_code, 400)
-        response = self.client.post('/synchronise/',
-                                    '{ "invalid": "json }',
-                                    content_type="application/json")
+        # prepare the second request (no JSON)
+        invalid_json = '{ "Hello": "There }'
+        invalid_json_url = quote(invalid_json)
+        payload = b'payload=' + bytes(invalid_json_url, 'utf-8')
+        # send it off
+        response = self.client.post('/synchronise/?user=jw',
+                                    payload, content_type=content_type)
         self.assertEqual(response.status_code, 400)
 
     def test_valid_post1(self):
