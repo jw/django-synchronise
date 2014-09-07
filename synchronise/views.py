@@ -5,9 +5,6 @@ from synchronise import synchronise
 
 import json
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 class SynchroniseView(View):
 
@@ -24,7 +21,7 @@ class SynchroniseView(View):
             return synchronise.synchronise(payload_json, user, project)
         except ValueError:
             return HttpResponse('Post contains an invalid JSON payload.\n',
-                                reason='Invalid JSON payload', status=400)
+                                status=400, reason='Invalid JSON payload.')
         except KeyError:
             return HttpResponse('A JSON payload needs to be provided.\n',
-                                reason='No JSON payload', status=400)
+                                status=400, reason='No JSON payload.')

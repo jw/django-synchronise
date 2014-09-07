@@ -1,5 +1,5 @@
 from django.test import Client
-from urllib.parse import quote
+from urllib.parse import quote_plus
 
 import unittest
 import synchronise
@@ -31,20 +31,22 @@ class BitBucketToGitHubTest(unittest.TestCase):
         content_type = 'application/x-www-form-urlencoded'
         # prepare the first request (no JSON payload)
         invalid_json = '{ "Hello": "There" }'
-        invalid_json_url = quote(invalid_json)
+        invalid_json_url = quote_plus(invalid_json)
         payload = b'payload=' + bytes(invalid_json_url, 'utf-8')
         # send it off
         response = self.client.post('/synchronise/?user=jw',
                                     payload, content_type=content_type)
+        # check
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.reason_phrase, 'No JSON payload')
         # prepare the second request (invalid JSON payload)
-        invalid_json = '{ "Hello": "No empty quote }'
-        invalid_json_url = quote(invalid_json)
+        invalid_json = '{ "Invalid": "No empty quote }'
+        invalid_json_url = quote_plus(invalid_json)
         payload = b'payload=' + bytes(invalid_json_url, 'utf-8')
         # send it off
         response = self.client.post('/synchronise/?user=jw',
                                     payload, content_type=content_type)
+        # check
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.reason_phrase, 'Invalid JSON payload')
 
