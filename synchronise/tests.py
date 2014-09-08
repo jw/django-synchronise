@@ -52,7 +52,6 @@ class BitBucketToGitHubTest(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.reason_phrase, 'Invalid JSON payload.')
 
-    @skip("Skipping")
     def test_valid_post1(self):
         """
         Test the push of this repository to the same repository on GitHub.
@@ -72,7 +71,6 @@ class BitBucketToGitHubTest(unittest.TestCase):
                                     valid_post)
         self.assertEqual(response.status_code, 200)
 
-    @skip("Skipping")
     def test_valid_post2(self):
         """
         Test the push of this repository to the same repository on GitHub.

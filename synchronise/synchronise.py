@@ -10,21 +10,53 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def is_bitbucket_hg_post(payload):
-    logger.debug('Searching payload for Bitbucket...')
+def print_payload(payload, length):
+    """
+    Replace each whitespace section in the payload with a space and
+    return it with a specified length.
+    :param payload: A dict
+    :param length: The required length
+    :return: The processed payload of the specified length.
+    """
+    clean = ' '.join(str(payload).split())
+    if len(clean) <= length:
+        return clean
+    else:
+        return '"' + clean[0:length] + '..."'
+
+
+def is_bitbucket_hg_payload(payload):
+    """
+    Check to see of the payload is a BitBucket POST from a Mercurial based
+    project
+    :param payload: The payload as a dist
+    :return: True when it is a BitBucket POST from a Mercurial payload; False
+    otherwise.
+    """
+
+    logger.debug('Checking {} for bitbucket and hg...'.
+                 format(print_payload(payload, 20)))
     result = False
     try:
         if 'bitbucket' in payload['canon_url']:
             repo = payload['repository']
             if repo['scm'] == 'hg':
-                logger.debug('This is a Bitbucket Mercurial repository.')
+                logger.debug('This is a Bitbucket Mercurial repository POST.')
                 result = True
     except KeyError:
         pass  # no canon_url or scm in payload
     return result
 
 
-def bitbucket_hg_post(payload, project, user):
+def bitbucket_hg_payload(payload, project=None, user=None):
+    """
+    Prepare a BitBucket Mercurial based project for synchronisation via
+    HgGit
+    :param payload: The payload as a dict
+    :param project: The project string
+    :param user: The userstring
+    :return:
+    """
     repo = payload['repository']
     # use default user and project when not given
     if user is None:
@@ -41,12 +73,20 @@ def bitbucket_hg_post(payload, project, user):
     except hgapi.HgException as he:
         HttpResponse("Could not convert: {}.".format(he),
                      status=500, reason='HgApi problem: {}'.format(he))
+    message = "Converted {} successfully".format(project)
+    return HttpResponse(message, status=200, reason=message)
 
 
 def synchronise(payload, user=None, project=None):
-    logger.debug('Handling {}...'.format(payload))
-    if is_bitbucket_hg_post(payload):
-        return bitbucket_hg_post(payload, project, user)
+    """
+    Synchronised the given payload.
+    :param payload: The payload as a dict
+    :param user: The user
+    :param project: The project
+    :return: A HttpResponse, either 200 when successful, 400 or 500 otherwise.
+    """
+    if is_bitbucket_hg_payload(payload):
+        return bitbucket_hg_payload(payload, project, user)
     return HttpResponse('No proper JSON in payload. Discarding it.',
                         status=400, reason='No proper JSON in payload.')
 
@@ -90,22 +130,22 @@ def hg_to_git(hg_path, git_path):
     :param git_path: The Github (obviously Git based) repository.
     :return:
     """
-    print('Converting {} to {}.'.format(hg_path, git_path))
+    logger.debug('Converting {} to {}.'.format(hg_path, git_path))
     with TemporaryDirectory(prefix='hg-') as hg_repo_path:
-        print('hgapi.hg_clone({}, {})'.format(hg_path, hg_repo_path))
+        logger.debug('Cloning {} to {}...'.format(hg_path, hg_repo_path))
         hg_repo = hgapi.hg_clone(hg_path, hg_repo_path)
         add_hggit_extension_and_git_path(hg_repo_path, git_path)
-        print('Bookmarking...')
+        logger.debug('Bookmarking the clone...')
         hg_repo.hg_bookmarks(action=hgapi.Repo.BOOKMARK_CREATE, name='master')
-        print('Pushing to github...')
+        logger.debug('Pushing it to github...')
         hg_repo.hg_push('github')
 
 
 def git_to_hg(git_path, hg_path):
-    print('Converting {} to {}.'.format(git_path, hg_path))
+    logger.debug('Converting {} to {}.'.format(git_path, hg_path))
     raise NotImplemented
 
 
 def git_to_git(git_path, other_git_path):
-    print('Converting {} to {}.'.format(git_path, other_git_path))
+    logger.debug('Converting {} to {}.'.format(git_path, other_git_path))
     raise NotImplemented
