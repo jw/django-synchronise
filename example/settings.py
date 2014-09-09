@@ -80,11 +80,11 @@ LOGGING = {
     'formatters': {
         'verbose': {
             'format': '[%(levelname)-5s] [%(asctime)s] %(filename)s:'
-                      '%(lineno)d | %(message)s',
+                      '%(lineno)03d | %(message)s',
             'datefmt': '%Y.%m.%d %H:%M:%S'
         },
         'simple': {
-            'format': '[%(levelname)-5s] [%(filename)s:%(lineno)d] |'
+            'format': '[%(levelname)-5s] [%(filename)s:%(lineno)03d] |'
                       ' %(message)s'
         },
     },
