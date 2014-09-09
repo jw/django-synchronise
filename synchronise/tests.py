@@ -2,7 +2,6 @@ from django.test import Client
 from urllib.parse import quote_plus
 
 import unittest
-from unittest import skip
 
 import synchronise
 
