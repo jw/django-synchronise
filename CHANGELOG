@@ -1,7 +1,12 @@
 
-django-synchroniser 0.3.0 (released in three months)
+django-synchroniser 0.4.0 (released in three months)
 
     * Please add?
+
+django-synchroniser 0.3.0 (released in three months)
+
+    * Add git to git synchronisation?
+    * Check task framework?
 
 django-synchroniser 0.2.0 (released 09.12.2014)
 
