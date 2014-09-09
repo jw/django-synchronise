@@ -5,6 +5,7 @@ django-synchroniser 0.4.0 (released in three months)
 
 django-synchroniser 0.3.0 (released in three months)
 
+    * Make sure the fabfile works propery.
     * Add git to git synchronisation?
     * Check task framework?
 
