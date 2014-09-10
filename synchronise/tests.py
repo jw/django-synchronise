@@ -9,10 +9,10 @@ import synchronise
 class VersionTest(unittest.TestCase):
 
     def test_version_plain(self):
-        self.assertTrue(synchronise.get_version(), '0.1.0b42')
+        self.assertEqual(synchronise.get_version(), '0.2.0')
 
     def test_version_short(self):
-        self.assertTrue(synchronise.get_version(), '0.1.0')
+        self.assertEqual(synchronise.get_version(), '0.2.0')
 
 
 class BitBucketToGitHubTest(unittest.TestCase):
