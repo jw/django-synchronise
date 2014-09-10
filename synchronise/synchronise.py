@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 def print_payload(payload, length):
     """
-    Replace each whitespace section in the payload with a space and
-    return it with a specified length.
-    :param payload: A dict
-    :param length: The required length
+    Convert the payload to a string, and replace each whitespace section
+    with a single space. Return it with a specified length.
+    :param payload: A dict.
+    :param length: The required length.
     :return: The processed payload of the specified length.
     """
     clean = ' '.join(str(payload).split())
